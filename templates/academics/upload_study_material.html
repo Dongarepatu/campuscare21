@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Study Material - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Upload Study Material</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label">Material Title *</label>
+                            {{ form.title }}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_material_type" class="form-label">Material Type *</label>
+                                    {{ form.material_type }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_subject" class="form-label">Subject *</label>
+                                    {{ form.subject }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_file" class="form-label">File *</label>
+                            {{ form.file }}
+                            <div class="form-text">Upload the study material file</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_academic_year" class="form-label">Academic Year</label>
+                            {{ form.academic_year }}
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success">Upload Material</button>
+                            <a href="{% url 'academics:staff_dashboard' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    textarea {
+        min-height: 80px;
+    }
+</style>
+{% endblock %}

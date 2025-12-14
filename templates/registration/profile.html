@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">User Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_first_name" class="form-label">First Name</label>
+                                    {{ form.first_name }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_last_name" class="form-label">Last Name</label>
+                                    {{ form.last_name }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_phone" class="form-label">Phone</label>
+                            {{ form.phone }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_address" class="form-label">Address</label>
+                            {{ form.address }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+                            {{ form.date_of_birth }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_profile_picture" class="form-label">Profile Picture</label>
+                            {{ form.profile_picture }}
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                            <a href="{% url 'user_management:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

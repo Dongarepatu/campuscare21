@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Academic Management - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Academic Management</h1>
+            <p class="lead">Welcome, {{ user.get_role_display }} - Manage academic content</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Notes</h5>
+                    <p class="card-text display-6">{{ total_notes }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Study Materials</h5>
+                    <p class="card-text display-6">{{ total_materials }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Pending Notes</h5>
+                    <p class="card-text display-6">{{ pending_notes }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Today's Uploads</h5>
+                    <p class="card-text display-6">5</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'academics:upload_note' %}" class="btn btn-primary w-100 py-3">
+                                <i class="fas fa-upload fa-2x mb-2"></i><br>
+                                Upload Note
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'academics:upload_study_material' %}" class="btn btn-success w-100 py-3">
+                                <i class="fas fa-book-medical fa-2x mb-2"></i><br>
+                                Upload Material
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'academics:manage_notes' %}" class="btn btn-warning w-100 py-3">
+                                <i class="fas fa-tasks fa-2x mb-2"></i><br>
+                                Manage Notes
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'academics:manage_courses' %}" class="btn btn-info w-100 py-3">
+                                <i class="fas fa-graduation-cap fa-2x mb-2"></i><br>
+                                Manage Courses
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Recent Notes</h5>
+                    <a href="{% url 'academics:manage_notes' %}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for i in "12345" %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Sample Note {{ i }}</h6>
+                                <span class="badge bg-success">Approved</span>
+                            </div>
+                            <p class="mb-1 small text-muted">Mathematics • PDF</p>
+                            <small class="text-muted">Uploaded 2 days ago</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Management Tools</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{% url 'academics:manage_notes' %}?status=pending" class="list-group-item list-group-item-action">
+                            <i class="fas fa-clock text-warning me-2"></i>
+                            Review Pending Notes
+                            <span class="badge bg-warning float-end">{{ pending_notes }}</span>
+                        </a>
+                        <a href="{% url 'academics:manage_study_materials' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-book text-success me-2"></i>
+                            Manage Study Materials
+                        </a>
+                        <a href="{% url 'academics:manage_courses' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-graduation-cap text-info me-2"></i>
+                            Course Management
+                        </a>
+                        <a href="{% url 'academics:manage_subjects' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-book-open text-primary me-2"></i>
+                            Subject Management
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

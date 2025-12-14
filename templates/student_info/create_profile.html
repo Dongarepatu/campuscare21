@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Student Profile - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Create Student Profile</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Please complete your student profile to access all features.</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_student_id" class="form-label">Student ID *</label>
+                                    {{ form.student_id }}
+                                    {% if form.student_id.errors %}
+                                    <div class="text-danger">{{ form.student_id.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_enrollment_date" class="form-label">Enrollment Date *</label>
+                                    {{ form.enrollment_date }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_department" class="form-label">Department *</label>
+                                    {{ form.department }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_course" class="form-label">Course *</label>
+                                    {{ form.course }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_semester" class="form-label">Semester *</label>
+                                    {{ form.semester }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_emergency_contact" class="form-label">Emergency Contact</label>
+                                    {{ form.emergency_contact }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_father_name" class="form-label">Father's Name</label>
+                                    {{ form.father_name }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_mother_name" class="form-label">Mother's Name</label>
+                                    {{ form.mother_name }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Create Profile</button>
+                            <a href="{% url 'user_management:dashboard' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}

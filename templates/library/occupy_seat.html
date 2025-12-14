@@ -1,0 +1,79 @@
+<!-- templates/library/occupy_seat.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chair"></i> Occupy Seat {{ seat.seat_number }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Seat Details</h6>
+                        <p class="mb-0">
+                            <strong>Seat:</strong> {{ seat.seat_number }}<br>
+                            <strong>Type:</strong> {{ seat.get_seat_type_display }}<br>
+                            <strong>Zone:</strong> {{ seat.get_zone_display }}<br>
+                            {% if seat.has_monitor %}<i class="fas fa-desktop text-info"></i> Has Monitor{% endif %}
+                            {% if seat.has_outlet %}<i class="fas fa-plug text-success"></i> Has Power Outlet{% endif %}
+                        </p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-clock"></i> Expected Study Duration
+                            </label>
+                            <div class="input-group">
+                                {{ form.expected_duration }}
+                                <span class="input-group-text">minutes</span>
+                            </div>
+                            <small class="text-muted">Maximum 4 hours (240 minutes)</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-book"></i> Subject You're Studying
+                            </label>
+                            {{ form.subject_studying }}
+                            <small class="text-muted">Optional: Helps us understand library usage</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-bullseye"></i> Study Purpose
+                            </label>
+                            {{ form.study_purpose }}
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-exclamation-triangle"></i> Important Notes</h6>
+                            <ul class="mb-0">
+                                <li>Maximum study duration: 4 hours</li>
+                                <li>Seat will auto-release when time expires</li>
+                                <li>Please release seat when you finish</li>
+                                <li>One seat per student at a time</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Confirm Occupation
+                            </button>
+                            <a href="{% url 'library:seat_map' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

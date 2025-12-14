@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block title %}Seat {{ seat.seat_number }} Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">Seat {{ seat.seat_number }}</h3>
+                        <div>
+                            {% if seat.is_available %}
+                            <span class="badge bg-success">Available</span>
+                            {% else %}
+                            <span class="badge bg-danger">Occupied</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Seat Info -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Seat Information</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td width="40%"><strong>Seat Number:</strong></td>
+                                    <td>{{ seat.seat_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Floor:</strong></td>
+                                    <td>Floor {{ seat.floor }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Zone:</strong></td>
+                                    <td>{{ seat.zone|default:"General Area" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Type:</strong></td>
+                                    <td>
+                                        <span class="badge {% if seat.seat_type == 'premium' %}bg-warning{% elif seat.seat_type == 'group' %}bg-info{% elif seat.seat_type == 'quiet' %}bg-secondary{% else %}bg-light text-dark{% endif %}">
+                                            {{ seat.get_seat_type_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Current Status</h6>
+                            {% if seat.is_available %}
+                            <div class="alert alert-success">
+                                <h5><i class="bi bi-check-circle"></i> Available</h5>
+                                <p class="mb-0">This seat is free for use.</p>
+                            </div>
+                            <form method="post" action="{% url 'library:occupy_seat' seat.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-check-lg"></i> Occupy This Seat
+                                </button>
+                            </form>
+                            {% else %}
+                            <div class="alert alert-danger">
+                                <h5><i class="bi bi-x-circle"></i> Occupied</h5>
+                                <p class="mb-1">
+                                    <strong>Occupied by:</strong> 
+                                    <i class="bi bi-person-circle"></i> {{ seat.current_user.username }}
+                                </p>
+                                {% if seat.current_user.get_full_name %}
+                                <p class="mb-1"><strong>Name:</strong> {{ seat.current_user.get_full_name }}</p>
+                                {% endif %}
+                                {% if seat.occupied_since %}
+                                <p class="mb-1">
+                                    <strong>Since:</strong> {{ seat.occupied_since|date:"g:i A" }}
+                                    ({{ seat.get_occupation_duration }} hours ago)
+                                </p>
+                                {% endif %}
+                            </div>
+                            {% if seat.current_user == user %}
+                            <form method="post" action="{% url 'library:vacate_seat' seat.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger w-100">
+                                    <i class="bi bi-box-arrow-right"></i> Vacate This Seat
+                                </button>
+                            </form>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Amenities -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6>Amenities</h6>
+                            <div class="d-flex flex-wrap gap-3">
+                                {% if seat.has_outlet %}
+                                <div class="text-center p-3 border rounded">
+                                    <i class="bi bi-plug text-success" style="font-size: 2rem;"></i>
+                                    <div class="mt-2">Power Outlet</div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if seat.has_monitor %}
+                                <div class="text-center p-3 border rounded">
+                                    <i class="bi bi-display text-info" style="font-size: 2rem;"></i>
+                                    <div class="mt-2">Computer Monitor</div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if seat.seat_type == 'quiet' %}
+                                <div class="text-center p-3 border rounded">
+                                    <i class="bi bi-volume-mute text-secondary" style="font-size: 2rem;"></i>
+                                    <div class="mt-2">Quiet Zone</div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if seat.seat_type == 'group' %}
+                                <div class="text-center p-3 border rounded">
+                                    <i class="bi bi-people text-info" style="font-size: 2rem;"></i>
+                                    <div class="mt-2">Group Study</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    {% if seat.description %}
+                    <div class="mb-4">
+                        <h6>Description</h6>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                {{ seat.description|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Occupation History -->
+                    {% if occupation_history %}
+                    <div class="mb-4">
+                        <h6>Recent Usage History</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Occupied At</th>
+                                        <th>Vacated At</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for occupation in occupation_history %}
+                                    <tr>
+                                        <td>{{ occupation.user.username }}</td>
+                                        <td>{{ occupation.occupied_at|date:"M d, g:i A" }}</td>
+                                        <td>
+                                            {% if occupation.vacated_at %}
+                                            {{ occupation.vacated_at|date:"M d, g:i A" }}
+                                            {% else %}
+                                            <span class="badge bg-warning">Active</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if occupation.duration_minutes %}
+                                            {% with hours=occupation.duration_minutes|divisibleby:60 %}
+                                            {{ occupation.duration_minutes|divisibleby:60|yesno:"hours,minutes" }}
+                                            {% endwith %}
+                                            {% else %}
+                                            —
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Actions Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'library:seat_map' %}?floor={{ seat.floor }}" 
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-building"></i> View Floor {{ seat.floor }}
+                        </a>
+                        <a href="{% url 'library:seat_map' %}" 
+                           class="btn btn-outline-secondary">
+                            <i class="bi bi-grid-3x3-gap"></i> Back to Seat Map
+                        </a>
+                        <a href="{% url 'library:dashboard' %}" 
+                           class="btn btn-outline-info">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Similar Seats -->
+            {% if similar_seats %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Similar Seats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for similar_seat in similar_seats %}
+                        <a href="{% url 'library:seat_detail' similar_seat.id %}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Seat {{ similar_seat.seat_number }}</strong><br>
+                                    <small class="text-muted">Floor {{ similar_seat.floor }}</small>
+                                </div>
+                                <div>
+                                    {% if similar_seat.is_available %}
+                                    <span class="badge bg-success">Available</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Occupied</span>
+                                    {% if similar_seat.current_user %}
+                                    <br><small class="text-muted">{{ similar_seat.current_user.username }}</small>
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

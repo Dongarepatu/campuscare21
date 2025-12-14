@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Grades - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Manage Grades</h1>
+            <p class="lead">Total Grade Records: {{ grades.count }}</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Grade Records</h5>
+                </div>
+                <div class="card-body">
+                    {% if grades %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Subject</th>
+                                    <th>Semester</th>
+                                    <th>Assignment</th>
+                                    <th>Internal</th>
+                                    <th>Final</th>
+                                    <th>Total</th>
+                                    <th>Grade</th>
+                                    <th>Grade Point</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in grades %}
+                                <tr>
+                                    <td>{{ grade.student.student_id }}</td>
+                                    <td>{{ grade.student.user.get_full_name|default:grade.student.user.username }}</td>
+                                    <td>{{ grade.subject }}</td>
+                                    <td>{{ grade.semester }}</td>
+                                    <td>{{ grade.assignment_marks }}</td>
+                                    <td>{{ grade.internal_marks }}</td>
+                                    <td>{{ grade.final_marks }}</td>
+                                    <td><strong>{{ grade.assignment_marks|add:grade.internal_marks|add:grade.final_marks }}</strong></td>
+                                    <td><span class="badge bg-primary">{{ grade.grade }}</span></td>
+                                    <td>{{ grade.grade_point }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No grade records found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

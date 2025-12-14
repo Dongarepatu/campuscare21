@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Courses - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Manage Courses</h1>
+            <p class="lead">Manage academic courses and programs</p>
+        </div>
+    </div>
+
+    <!-- Courses List -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Courses List ({{ courses.count }})</h5>
+                    <button class="btn btn-primary btn-sm">Add New Course</button>
+                </div>
+                <div class="card-body">
+                    {% if courses %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Semester</th>
+                                    <th>Credits</th>
+                                    <th>Subjects</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for course in courses %}
+                                <tr>
+                                    <td><strong>{{ course.code }}</strong></td>
+                                    <td>{{ course.name }}</td>
+                                    <td>{{ course.department }}</td>
+                                    <td>Semester {{ course.semester }}</td>
+                                    <td>{{ course.credits }} Credits</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ course.subjects.count }}</span>
+                                    </td>
+                                    <td>{{ course.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary">Edit</button>
+                                            <button class="btn btn-outline-danger">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No courses found.</p>
+                        <button class="btn btn-primary">Add First Course</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

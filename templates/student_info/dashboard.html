@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Student Dashboard</h1>
+            <p class="lead">Welcome, {{ student_profile.user.get_full_name|default:student_profile.user.username }}</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Attendance</h5>
+                    <p class="card-text display-6">{{ attendance_percentage }}%</p>
+                    <small>{{ present_classes }}/{{ total_classes }} classes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Current Semester</h5>
+                    <p class="card-text display-6">{{ student_profile.semester }}</p>
+                    <small>{{ student_profile.course }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Student ID</h5>
+                    <p class="card-text">{{ student_profile.student_id }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Department</h5>
+                    <p class="card-text">{{ student_profile.department }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'student_info:attendance_report' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-calendar-check me-2"></i>View Attendance Report
+                        </a>
+                        <a href="{% url 'student_info:grade_report' %}" class="btn btn-outline-success">
+                            <i class="fas fa-chart-bar me-2"></i>View Grade Report
+                        </a>
+                        <a href="{% url 'student_info:edit_profile' %}" class="btn btn-outline-info">
+                            <i class="fas fa-user-edit me-2"></i>Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Attendance</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_attendance %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in recent_attendance %}
+                                <tr>
+                                    <td>{{ record.date }}</td>
+                                    <td>{{ record.subject }}</td>
+                                    <td>
+                                        <span class="badge {% if record.status == 'present' %}bg-success{% elif record.status == 'absent' %}bg-danger{% else %}bg-warning{% endif %}">
+                                            {{ record.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No attendance records found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Grades -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Grades</h5>
+                </div>
+                <div class="card-body">
+                    {% if grades %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Semester</th>
+                                    <th>Assignment</th>
+                                    <th>Internal</th>
+                                    <th>Final</th>
+                                    <th>Grade</th>
+                                    <th>Grade Point</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in grades %}
+                                <tr>
+                                    <td>{{ grade.subject }}</td>
+                                    <td>{{ grade.semester }}</td>
+                                    <td>{{ grade.assignment_marks }}</td>
+                                    <td>{{ grade.internal_marks }}</td>
+                                    <td>{{ grade.final_marks }}</td>
+                                    <td><span class="badge bg-primary">{{ grade.grade }}</span></td>
+                                    <td>{{ grade.grade_point }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No grade records found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

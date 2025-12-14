@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Academic Dashboard - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Academic Dashboard</h1>
+            <p class="lead">Welcome to your academic resources portal</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Available Notes</h5>
+                    <p class="card-text display-6">{{ notes.count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Study Materials</h5>
+                    <p class="card-text display-6">{{ study_materials.count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Subjects</h5>
+                    <p class="card-text display-6">{{ subjects.count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Courses</h5>
+                    <p class="card-text display-6">{{ courses.count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Access</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'academics:note_list' %}" class="btn btn-primary w-100 py-3">
+                                <i class="fas fa-file-pdf fa-2x mb-2"></i><br>
+                                View All Notes
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'academics:study_material_list' %}" class="btn btn-success w-100 py-3">
+                                <i class="fas fa-book fa-2x mb-2"></i><br>
+                                Study Materials
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="#" class="btn btn-info w-100 py-3">
+                                <i class="fas fa-search fa-2x mb-2"></i><br>
+                                Search Resources
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Notes -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Recent Notes</h5>
+                    <a href="{% url 'academics:note_list' %}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if notes %}
+                    <div class="list-group">
+                        {% for note in notes %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ note.title }}</h6>
+                                <small class="text-muted">{{ note.uploaded_at|date:"M d" }}</small>
+                            </div>
+                            <p class="mb-1 small text-muted">{{ note.subject.name }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-file-{{ note.file_type }} me-1"></i>
+                                    {{ note.get_file_type_display }}
+                                </small>
+                                <div>
+                                    <a href="{% url 'academics:note_detail' note.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                    <a href="{% url 'academics:download_note' note.pk %}" class="btn btn-sm btn-success">Download</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No notes available yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Study Materials -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Recent Study Materials</h5>
+                    <a href="{% url 'academics:study_material_list' %}" class="btn btn-sm btn-success">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if study_materials %}
+                    <div class="list-group">
+                        {% for material in study_materials %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ material.title }}</h6>
+                                <small class="text-muted">{{ material.uploaded_at|date:"M d" }}</small>
+                            </div>
+                            <p class="mb-1 small text-muted">
+                                {{ material.subject.name }} • {{ material.get_material_type_display }}
+                            </p>
+                            <small class="text-muted">Academic Year: {{ material.academic_year }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No study materials available yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Your Courses -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Your Courses & Subjects</h5>
+                </div>
+                <div class="card-body">
+                    {% if courses %}
+                    <div class="row">
+                        {% for course in courses %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ course.code }} - {{ course.name }}</h6>
+                                    <p class="card-text small text-muted">
+                                        Semester {{ course.semester }} • {{ course.credits }} Credits
+                                    </p>
+                                    <div class="mt-2">
+                                        <strong>Subjects:</strong>
+                                        <ul class="list-unstyled mt-1">
+                                            {% for subject in course.subjects.all %}
+                                            <li class="small">• {{ subject.name }}</li>
+                                            {% empty %}
+                                            <li class="small text-muted">No subjects available</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No course information available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

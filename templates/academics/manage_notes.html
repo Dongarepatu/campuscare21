@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Notes - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Manage Notes</h1>
+            <p class="lead">Review and manage all uploaded notes</p>
+        </div>
+    </div>
+
+    <!-- Filters and Actions -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'academics:manage_notes' %}" 
+                                   class="btn btn-{% if not status_filter %}primary{% else %}outline-primary{% endif %}">
+                                    All Notes
+                                </a>
+                                <a href="{% url 'academics:manage_notes' %}?status=approved" 
+                                   class="btn btn-{% if status_filter == 'approved' %}success{% else %}outline-success{% endif %}">
+                                    Approved
+                                </a>
+                                <a href="{% url 'academics:manage_notes' %}?status=pending" 
+                                   class="btn btn-{% if status_filter == 'pending' %}warning{% else %}outline-warning{% endif %}">
+                                    Pending
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a href="{% url 'academics:upload_note' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Upload New Note
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Table -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Notes List ({{ notes.count }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if notes %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Subject</th>
+                                    <th>File Type</th>
+                                    <th>Uploaded By</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for note in notes %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ note.title }}</strong>
+                                        {% if note.description %}
+                                        <br><small class="text-muted">{{ note.description|truncatewords:10 }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ note.subject.name }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if note.file_type == 'pdf' %}danger{% elif note.file_type == 'doc' %}primary{% else %}secondary{% endif %}">
+                                            {{ note.get_file_type_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ note.uploaded_by.get_full_name|default:note.uploaded_by.username }}</td>
+                                    <td>{{ note.uploaded_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if note.is_approved %}success{% else %}warning{% endif %}">
+                                            {% if note.is_approved %}Approved{% else %}Pending{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'academics:note_detail' note.pk %}" class="btn btn-outline-primary" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'academics:toggle_note_approval' note.pk %}" 
+                                               class="btn btn-{% if note.is_approved %}warning{% else %}success{% endif %}" 
+                                               title="{% if note.is_approved %}Disapprove{% else %}Approve{% endif %}">
+                                                <i class="fas fa-{% if note.is_approved %}times{% else %}check{% endif %}"></i>
+                                            </a>
+                                            <a href="{% url 'academics:download_note' note.pk %}" class="btn btn-outline-success" title="Download">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                            <a href="{% url 'academics:delete_note' note.pk %}" class="btn btn-outline-danger" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No notes found.</p>
+                        <a href="{% url 'academics:upload_note' %}" class="btn btn-primary">Upload First Note</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ note.title }} - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'academics:student_dashboard' %}">Academics</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'academics:note_list' %}">Notes</a></li>
+                    <li class="breadcrumb-item active">{{ note.title|truncatewords:5 }}</li>
+                </ol>
+            </nav>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">{{ note.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Subject:</strong> {{ note.subject.name }}</p>
+                            <p class="mb-1"><strong>Course:</strong> {{ note.subject.course.name }}</p>
+                            <p class="mb-1"><strong>File Type:</strong> 
+                                <span class="badge bg-{% if note.file_type == 'pdf' %}danger{% elif note.file_type == 'doc' %}primary{% else %}secondary{% endif %}">
+                                    {{ note.get_file_type_display }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Uploaded By:</strong> {{ note.uploaded_by.get_full_name|default:note.uploaded_by.username }}</p>
+                            <p class="mb-1"><strong>Uploaded On:</strong> {{ note.uploaded_at|date:"F d, Y" }}</p>
+                            <p class="mb-1"><strong>File Size:</strong> {{ note.get_file_size }}</p>
+                        </div>
+                    </div>
+
+                    {% if note.description %}
+                    <div class="mb-3">
+                        <h6>Description:</h6>
+                        <p class="text-muted">{{ note.description }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        <a href="{% url 'academics:download_note' note.pk %}" class="btn btn-success btn-lg">
+                            <i class="fas fa-download me-2"></i>Download Note
+                        </a>
+                        <a href="{% url 'academics:note_list' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Notes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6>Note Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-file-{{ note.file_type }} fa-3x text-{% if note.file_type == 'pdf' %}danger{% elif note.file_type == 'doc' %}primary{% else %}secondary{% endif %} mb-3"></i>
+                        <h6>{{ note.get_file_type_display }} Document</h6>
+                    </div>
+                    
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span>Subject Code:</span>
+                            <strong>{{ note.subject.code }}</strong>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span>Course Code:</span>
+                            <strong>{{ note.subject.course.code }}</strong>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span>Semester:</span>
+                            <strong>{{ note.subject.course.semester }}</strong>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span>Status:</span>
+                            <span class="badge bg-{% if note.is_approved %}success{% else %}warning{% endif %}">
+                                {% if note.is_approved %}Approved{% else %}Pending{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6>Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'academics:note_list' %}?subject={{ note.subject.id }}" class="btn btn-outline-primary">
+                            More Notes from {{ note.subject.name }}
+                        </a>
+                        <a href="{% url 'academics:study_material_list' %}" class="btn btn-outline-success">
+                            View Study Materials
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

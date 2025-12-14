@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Details - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Student Details</h1>
+            <p class="lead">{{ student_profile.user.get_full_name|default:student_profile.user.username }}</p>
+        </div>
+    </div>
+
+    <!-- Student Information -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th>Student ID:</th>
+                            <td>{{ student_profile.student_id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Name:</th>
+                            <td>{{ student_profile.user.get_full_name|default:"Not provided" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ student_profile.user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Department:</th>
+                            <td>{{ student_profile.department }}</td>
+                        </tr>
+                        <tr>
+                            <th>Course:</th>
+                            <td>{{ student_profile.course }}</td>
+                        </tr>
+                        <tr>
+                            <th>Semester:</th>
+                            <td>{{ student_profile.semester }}</td>
+                        </tr>
+                        <tr>
+                            <th>Enrollment Date:</th>
+                            <td>{{ student_profile.enrollment_date }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Family & Contact Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th>Father's Name:</th>
+                            <td>{{ student_profile.father_name|default:"Not provided" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Mother's Name:</th>
+                            <td>{{ student_profile.mother_name|default:"Not provided" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Emergency Contact:</th>
+                            <td>{{ student_profile.emergency_contact|default:"Not provided" }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Attendance -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Attendance</h5>
+                </div>
+                <div class="card-body">
+                    {% if attendance_records %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in attendance_records %}
+                                <tr>
+                                    <td>{{ record.date }}</td>
+                                    <td>{{ record.subject }}</td>
+                                    <td>
+                                        <span class="badge {% if record.status == 'present' %}bg-success{% elif record.status == 'absent' %}bg-danger{% else %}bg-warning{% endif %}">
+                                            {{ record.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ record.remarks|default:"-" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No attendance records found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grades -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Academic Performance</h5>
+                </div>
+                <div class="card-body">
+                    {% if grades %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Semester</th>
+                                    <th>Assignment</th>
+                                    <th>Internal</th>
+                                    <th>Final</th>
+                                    <th>Total</th>
+                                    <th>Grade</th>
+                                    <th>Grade Point</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in grades %}
+                                <tr>
+                                    <td>{{ grade.subject }}</td>
+                                    <td>{{ grade.semester }}</td>
+                                    <td>{{ grade.assignment_marks }}</td>
+                                    <td>{{ grade.internal_marks }}</td>
+                                    <td>{{ grade.final_marks }}</td>
+                                    <td><strong>{{ grade.assignment_marks|add:grade.internal_marks|add:grade.final_marks }}</strong></td>
+                                    <td><span class="badge bg-primary">{{ grade.grade }}</span></td>
+                                    <td>{{ grade.grade_point }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No grade records found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

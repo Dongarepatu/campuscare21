@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Study Materials - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Manage Study Materials</h1>
+            <p class="lead">Manage all study materials and resources</p>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body text-end">
+                    <a href="{% url 'academics:upload_study_material' %}" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Upload New Material
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Materials Table -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Study Materials List ({{ materials.count }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if materials %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Subject</th>
+                                    <th>Course</th>
+                                    <th>Academic Year</th>
+                                    <th>Uploaded By</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for material in materials %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ material.title }}</strong>
+                                        {% if material.description %}
+                                        <br><small class="text-muted">{{ material.description|truncatewords:8 }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{% if material.material_type == 'syllabus' %}primary{% elif material.material_type == 'question_paper' %}success{% else %}secondary{% endif %}">
+                                            {{ material.get_material_type_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ material.subject.name }}</td>
+                                    <td>{{ material.subject.course.code }}</td>
+                                    <td>{{ material.academic_year }}</td>
+                                    <td>{{ material.uploaded_by.get_full_name|default:material.uploaded_by.username }}</td>
+                                    <td>{{ material.uploaded_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="#" class="btn btn-outline-primary" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-outline-success" title="Download">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-outline-danger" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No study materials found.</p>
+                        <a href="{% url 'academics:upload_study_material' %}" class="btn btn-success">Upload First Material</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Grade Report - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Grade Report</h1>
+            <p class="lead">Student: {{ student_profile.user.get_full_name|default:student_profile.user.username }}</p>
+        </div>
+    </div>
+
+    <!-- CGPA Summary -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Cumulative GPA (CGPA)</h4>
+                    <p class="display-4 text-primary">{{ cgpa }}</p>
+                    <p class="text-muted">On a scale of 4.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Semester Filter -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Filter by Semester</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row">
+                        <div class="col-md-4">
+                            <label for="semester" class="form-label">Semester</label>
+                            <select class="form-control" id="semester" name="semester">
+                                <option value="">All Semesters</option>
+                                {% for i in "12345678" %}
+                                <option value="{{ i }}" {% if semester_filter == i %}selected{% endif %}>Semester {{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">Apply Filter</button>
+                            <a href="{% url 'student_info:grade_report' %}" class="btn btn-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grades by Semester -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            {% for semester, grades in grades_by_semester.items %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Semester {{ semester }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Assignment Marks</th>
+                                    <th>Internal Marks</th>
+                                    <th>Final Marks</th>
+                                    <th>Total Marks</th>
+                                    <th>Grade</th>
+                                    <th>Grade Point</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in grades %}
+                                <tr>
+                                    <td>{{ grade.subject }}</td>
+                                    <td>{{ grade.assignment_marks }}</td>
+                                    <td>{{ grade.internal_marks }}</td>
+                                    <td>{{ grade.final_marks }}</td>
+                                    <td><strong>{{ grade.assignment_marks|add:grade.internal_marks|add:grade.final_marks }}</strong></td>
+                                    <td><span class="badge bg-primary">{{ grade.grade }}</span></td>
+                                    <td>{{ grade.grade_point }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="card">
+                <div class="card-body text-center">
+                    <p class="text-muted">No grade records found.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

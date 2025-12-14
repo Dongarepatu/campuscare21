@@ -1,0 +1,277 @@
+<!-- templates/library/seat_map.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header with Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h2 class="mb-1">
+                                <i class="fas fa-book-reader"></i> Ground Floor Library
+                            </h2>
+                            <p class="mb-0">50 Seats • Real-time Tracking</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h3 class="mb-0">{{ available_seats }}</h3>
+                                    <small>Available</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="mb-0">{{ occupied_seats }}</h3>
+                                    <small>Occupied</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="mb-0">{{ total_seats }}</h3>
+                                    <small>Total Seats</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User's Current Seat Alert -->
+    {% if user_seat %}
+    <div class="alert alert-warning alert-dismissible fade show">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-user-clock fa-lg me-2"></i>
+                <strong>You are currently studying at:</strong>
+                <span class="badge bg-dark fs-6 ms-2">Seat {{ user_seat.seat_number }}</span>
+                <br>
+                <small class="text-muted">
+                    <i class="fas fa-book"></i> 
+                    {{ user_seat.subject_studying|default:"General Study" }} | 
+                    <i class="fas fa-clock"></i> 
+                    Started: {{ user_seat.occupied_since|time:"g:i A" }} | 
+                    Duration: {{ user_seat.get_occupation_time_display }} / {{ user_seat.expected_duration }} min
+                </small>
+            </div>
+            <div>
+                <a href="{% url 'library:release_my_seat' %}" class="btn btn-danger btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> Finish Study
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Seat Type</label>
+                    {{ form.seat_type }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Zone</label>
+                    {{ form.zone }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Availability</label>
+                    {{ form.availability }}
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Currently Studying Students -->
+    {% if studying_students %}
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-users"></i> Currently Studying ({{ studying_students|length }} students)
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Seat</th>
+                            <th>Subject</th>
+                            <th>Purpose</th>
+                            <th>Started At</th>
+                            <th>Duration</th>
+                            <th>Expected Until</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for seat in studying_students %}
+                        <tr>
+                            <td>
+                                <i class="fas fa-user-graduate"></i>
+                                {{ seat.occupied_by.username }}
+                                {% if seat.occupied_by.get_full_name %}
+                                <br><small>{{ seat.occupied_by.get_full_name }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-dark">{{ seat.seat_number }}</span>
+                            </td>
+                            <td>{{ seat.subject_studying|default:"General" }}</td>
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ seat.get_study_purpose_display|default:"Study" }}
+                                </span>
+                            </td>
+                            <td>{{ seat.occupied_since|time:"g:i A" }}</td>
+                            <td>{{ seat.get_occupation_time_display }}</td>
+                            <td>
+                                {% with end_time=seat.get_expected_end_time %}
+                                {% if end_time %}
+                                {{ end_time|time:"g:i A" }}
+                                <br><small class="text-muted">{{ end_time|timeuntil }}</small>
+                                {% endif %}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Seat Grid -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-th"></i> Seat Layout (GF01-GF50)
+            </h5>
+        </div>
+        <div class="card-body">
+            <!-- Zone-wise display -->
+            {% regroup seats by get_zone_display as zone_list %}
+            
+            {% for zone in zone_list %}
+            <div class="mb-5">
+                <h5 class="border-bottom pb-2">
+                    <i class="fas fa-map-marker-alt text-primary"></i> 
+                    {{ zone.grouper }}
+                    <small class="text-muted">({{ zone.list|length }} seats)</small>
+                </h5>
+                
+                <div class="row g-3">
+                    {% for seat in zone.list %}
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                        <div class="card h-100 {% if seat.is_available %}border-success{% else %}border-danger{% endif %}">
+                            <div class="card-body">
+                                <!-- Seat Header -->
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-chair"></i> {{ seat.seat_number }}
+                                    </h5>
+                                    {% if seat.has_monitor %}
+                                    <i class="fas fa-desktop text-info" title="Has Monitor"></i>
+                                    {% endif %}
+                                    {% if seat.has_outlet %}
+                                    <i class="fas fa-plug text-success" title="Has Power Outlet"></i>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Seat Type -->
+                                <p class="mb-2">
+                                    <span class="badge bg-secondary">{{ seat.get_seat_type_display }}</span>
+                                </p>
+                                
+                                <!-- Seat Status -->
+                                {% if seat.is_available %}
+                                <div class="alert alert-success py-2 mb-3">
+                                    <i class="fas fa-check-circle"></i> Available
+                                </div>
+                                
+                                <!-- Occupy Button -->
+                                {% if not user_seat %}
+                                <a href="{% url 'library:occupy_seat' seat.id %}" class="btn btn-success w-100">
+                                    <i class="fas fa-check"></i> Occupy Seat
+                                </a>
+                                {% else %}
+                                <button class="btn btn-outline-secondary w-100" disabled>
+                                    You have a seat
+                                </button>
+                                {% endif %}
+                                
+                                {% else %}
+                                <!-- Occupied Seat Info -->
+                                <div class="alert alert-danger py-2 mb-3">
+                                    <i class="fas fa-user-graduate"></i> 
+                                    <strong>{{ seat.occupied_by.username }}</strong>
+                                    <div class="mt-2">
+                                        <small>
+                                            <i class="fas fa-book"></i> 
+                                            {{ seat.subject_studying|default:"General Study" }}<br>
+                                            <i class="fas fa-clock"></i> 
+                                            {{ seat.get_occupation_time_display }}
+                                            {% if seat.is_overstaying %}
+                                            <span class="badge bg-warning">Overstaying</span>
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Release Button (only for occupant) -->
+                                {% if seat.occupied_by == user %}
+                                <form method="post" action="{% url 'library:release_seat' seat.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-warning w-100">
+                                        <i class="fas fa-sign-out-alt"></i> Finish Study
+                                    </button>
+                                </form>
+                                {% else %}
+                                <button class="btn btn-outline-secondary w-100" disabled>
+                                    Occupied
+                                </button>
+                                {% endif %}
+                                {% endif %}
+                                
+                                <!-- Details Link -->
+                                <a href="{% url 'library:seat_detail' seat.id %}" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Auto-refresh script -->
+<script>
+// Auto-refresh every 30 seconds
+setTimeout(function(){
+    window.location.reload();
+}, 30000);
+
+// Highlight user's seat
+{% if user_seat %}
+document.addEventListener('DOMContentLoaded', function() {
+    const userSeat = document.querySelector('h5:contains("{{ user_seat.seat_number }}")');
+    if (userSeat) {
+        const card = userSeat.closest('.card');
+        card.classList.add('border-warning', 'border-3');
+    }
+});
+{% endif %}
+</script>
+{% endblock %}

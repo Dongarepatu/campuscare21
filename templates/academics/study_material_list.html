@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Study Materials - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Study Materials</h1>
+            <p class="lead">Additional learning resources and references</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Filter Materials</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row">
+                        <div class="col-md-6">
+                            <label for="material_type" class="form-label">Material Type</label>
+                            <select class="form-control" id="material_type" name="material_type">
+                                <option value="">All Types</option>
+                                <option value="syllabus" {% if material_type_filter == 'syllabus' %}selected{% endif %}>Syllabus</option>
+                                <option value="question_paper" {% if material_type_filter == 'question_paper' %}selected{% endif %}>Question Paper</option>
+                                <option value="lab_manual" {% if material_type_filter == 'lab_manual' %}selected{% endif %}>Lab Manual</option>
+                                <option value="reference" {% if material_type_filter == 'reference' %}selected{% endif %}>Reference Material</option>
+                                <option value="tutorial" {% if material_type_filter == 'tutorial' %}selected{% endif %}>Tutorial</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">Apply Filter</button>
+                            <a href="{% url 'academics:study_material_list' %}" class="btn btn-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Materials List -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Available Materials ({{ materials.count }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if materials %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Subject</th>
+                                    <th>Course</th>
+                                    <th>Academic Year</th>
+                                    <th>Uploaded By</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for material in materials %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ material.title }}</strong>
+                                        {% if material.description %}
+                                        <br><small class="text-muted">{{ material.description|truncatewords:10 }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{% if material.material_type == 'syllabus' %}primary{% elif material.material_type == 'question_paper' %}success{% else %}secondary{% endif %}">
+                                            {{ material.get_material_type_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ material.subject.name }}</td>
+                                    <td>{{ material.subject.course.code }}</td>
+                                    <td>{{ material.academic_year }}</td>
+                                    <td>{{ material.uploaded_by.get_full_name|default:material.uploaded_by.username }}</td>
+                                    <td>{{ material.uploaded_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-success">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No study materials found.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

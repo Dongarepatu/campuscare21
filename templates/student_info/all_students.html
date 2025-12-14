@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}All Students - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>All Students</h1>
+            <p class="lead">Total Students: {{ students.count }}</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Student List</h5>
+                </div>
+                <div class="card-body">
+                    {% if students %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Department</th>
+                                    <th>Course</th>
+                                    <th>Semester</th>
+                                    <th>Enrollment Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                <tr>
+                                    <td>{{ student.student_id }}</td>
+                                    <td>{{ student.user.get_full_name|default:student.user.username }}</td>
+                                    <td>{{ student.user.email }}</td>
+                                    <td>{{ student.department }}</td>
+                                    <td>{{ student.course }}</td>
+                                    <td>{{ student.semester }}</td>
+                                    <td>{{ student.enrollment_date }}</td>
+                                    <td>
+                                        <a href="{% url 'student_info:student_detail' student_id=student.student_id %}" 
+                                           class="btn btn-sm btn-primary">View Details</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No students found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

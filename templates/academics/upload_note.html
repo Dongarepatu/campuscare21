@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Note - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Upload New Note</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label">Note Title *</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_subject" class="form-label">Subject *</label>
+                            {{ form.subject }}
+                            {% if form.subject.errors %}
+                            <div class="text-danger">{{ form.subject.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_file" class="form-label">File *</label>
+                                    {{ form.file }}
+                                    {% if form.file.errors %}
+                                    <div class="text-danger">{{ form.file.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Supported formats: PDF, DOC, DOCX, PPT, PPTX, TXT, Images</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_file_type" class="form-label">File Type *</label>
+                                    {{ form.file_type }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Upload Note</button>
+                            <a href="{% url 'academics:staff_dashboard' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6>Upload Guidelines</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="small">
+                        <li>Ensure the file is relevant to the selected subject</li>
+                        <li>Use descriptive titles for better searchability</li>
+                        <li>Maximum file size: 10MB</li>
+                        <li>Notes will be reviewed before being available to students</li>
+                        <li>Only upload content you have permission to share</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    textarea {
+        min-height: 100px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Reports - CampusCare{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Student Reports</h1>
+            <p class="lead">Comprehensive student analytics and reports</p>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Students</h5>
+                    <p class="card-text display-6">{{ total_students }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Attendance</h5>
+                    <p class="card-text display-6">{{ total_attendance }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Avg Attendance %</h5>
+                    <p class="card-text display-6">{{ avg_attendance }}%</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Reports Generated</h5>
+                    <p class="card-text display-6">15</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Options -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Generate Reports</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
+                                    <h5>Attendance Report</h5>
+                                    <p>Detailed attendance analysis</p>
+                                    <button class="btn btn-primary">Generate</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-graduation-cap fa-3x text-success mb-3"></i>
+                                    <h5>Academic Report</h5>
+                                    <p>Student performance analysis</p>
+                                    <button class="btn btn-success">Generate</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-3x text-info mb-3"></i>
+                                    <h5>Student Directory</h5>
+                                    <p>Complete student listing</p>
+                                    <button class="btn btn-info">Generate</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

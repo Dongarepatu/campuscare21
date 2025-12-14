@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to CampusCare{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-primary text-white py-5">
+    <div class="container">
+        <h1 class="display-4">Welcome to CampusCare</h1>
+        <p class="lead">Comprehensive Campus Management System for Modern Educational Institutions</p>
+        <hr class="my-4">
+        <p>Streamline your campus operations with our all-in-one management solution.</p>
+        {% if not user.is_authenticated %}
+        <div class="mt-4">
+            <a class="btn btn-light btn-lg me-3" href="{% url 'user_management:register' %}" role="button">Get Started</a>
+            <a class="btn btn-outline-light btn-lg" href="{% url 'user_management:login' %}" role="button">Login</a>
+        </div>
+        {% else %}
+        <div class="mt-4">
+            <a class="btn btn-light btn-lg" href="{% url 'user_management:dashboard' %}" role="button">Go to Dashboard</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-graduate fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Student Management</h5>
+                    <p class="card-text">Comprehensive student records, attendance tracking, and academic monitoring.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Library System</h5>
+                    <p class="card-text">Digital library management with seat booking and resource tracking.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chalkboard-teacher fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Staff Portal</h5>
+                    <p class="card-text">Efficient faculty management and administrative tools.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
