@@ -1,0 +1,13 @@
+# Python compiled files
+__pycache__/
+*.py[cod]
+
+# Virtual Environments (very important!)
+venv/
+env/
+.env
+.venv/
+
+# Django specific
+db.sqlite3
+media/
