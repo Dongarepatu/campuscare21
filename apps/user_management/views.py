@@ -9,6 +9,7 @@ def register_view(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.role = 'Student'
             login(request, user)
             messages.success(request, 'Registration successful!')
             return redirect('user_management:dashboard')
